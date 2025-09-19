@@ -1,0 +1,19 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+
+
+# Data
+data/raw/*
+data/processed/*
+!data/processed/sample_output.csv  # 샘플 결과만 예외로
+
+# OS files
+.DS_Store

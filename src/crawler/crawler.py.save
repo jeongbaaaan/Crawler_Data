@@ -1,0 +1,74 @@
+import os
+import pandas as pd
+import requests
+from bs4 import BeautifulSoup
+
+# 파일 경로 설정
+SEED_FILE = "seed/gyms_seed.csv"
+OUTPUT_FILE = "data/processed/gym_prices.csv"
+
+def fetch_price_from_url(url):
+    """주어진 URL에서 가격 정보를 추출하는 함수 (기본 버전)"""
+    try:
+        response = requests.get(url, timeout=5)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, "html.parser")
+
+        # TODO: 사이트 구조에 맞게 수정 필요
+        # 현재는 예시로 <span class="price"> 태그를 검색
+        price_elements = soup.select("span.price")
+
+        if not price_elements:
+            return None
+
+        # 가격 여러 개가 있으면 리스트로 반환
+        return [el.get_text(strip=True) for el in price_elements]
+
+    except Exception as e:
+        print(f"[ERROR] Failed to fetch {url}: {e}")
+        return None
+
+def main():
+    # 1. CSV 로드
+    if not os.path.exists(SEED_FILE):
+        print(f"[ERROR] Seed file not found: {SEED_FILE}")
+        return
+
+    df = pd.read_csv(SEED_FILE)
+
+    # 결과 저장용 리스트
+    results = []
+
+    for idx, row in df.iterrows():
+        name = row["name"]
+        url = row["website_url"] if pd.notna(row["website_url"]) else row["source_url"]
+
+        if not pd.notna(url) or not url.startswith("http"):
+            print(f"[SKIP] No valid URL for {name}")
+            continue
+
+        print(f"[INFO] Fetching prices for: {name} ({url})")
+
+        prices = fetch_price_from_url(url)
+
+        results.append({
+            "name": name,
+            "address": row["address"],
+            "phone": row["phone"],
+            "prices": prices if prices else "NO_PRICE_FOUND",
+            "source_url": url
+        })
+
+    # 결과 저장
+    os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
+    pd.DataFrame(results).to_csv(OUTPUT_FILE, index=False, encoding="utf-8-sig")
+
+    print(f"[DONE] Saved results to {OUTPUT_FILE}")
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
