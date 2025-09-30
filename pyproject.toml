@@ -1,14 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
-name = "crawling-analysis-project"
+name = "gym-price-crawler"
 version = "0.1.0"
-description = "Add your description here"
+description = "Korean gym price crawler with BFS + heuristics, charset-safe fetching"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
+authors = [{ name = "Your Name", email = "you@example.com" }]
 dependencies = [
-    "beautifulsoup4>=4.13.5",
-    "pandas>=2.3.2",
-    "pillow>=11.3.0",
-    "pytesseract>=0.3.13",
-    "requests>=2.32.5",
-    "streamlit>=1.49.1",
+  "requests",
+  "beautifulsoup4",
+  "pandas",
+  "cloudscraper",
 ]
+
+[project.optional-dependencies]
+ocr = ["pillow", "pytesseract"]
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["crawler*"]
