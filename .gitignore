@@ -1,19 +1,15 @@
-# Python-generated files
+# venv & caches
+.venv/
 __pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+*.pyc
+*.DS_Store
 
-# Virtual environments
-.venv
+# local data & outputs (산출물/개인데이터 푸시 금지)
+data/debug_html/
+data/processed/
+data/raw/*.csv
+!data/raw/README.md
 
-
-# Data
-data/raw/*
-data/processed/*
-!data/processed/sample_output.csv  # 샘플 결과만 예외로
-
-# OS files
-.DS_Store
+# IDE
+.vscode/
+.idea/
